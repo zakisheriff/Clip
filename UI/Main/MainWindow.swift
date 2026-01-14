@@ -145,35 +145,41 @@ struct DetailView: View {
     
     var body: some View {
         VStack(spacing: 0) {
-            // Header Bar (Metadata Only)
+            // Notes-style Metadata Header (Subtle, centered or leading)
             HStack {
-                VStack(alignment: .leading) {
-                    Text(item.type.rawValue.uppercased())
-                        .font(.system(size: 11, weight: .bold))
-                        .foregroundColor(.secondary)
-                    
-                    Text("\(item.characterCount) characters")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                }
-                
+                Text("\(item.type.rawValue.uppercased()) • \(item.characterCount) chars")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                    .padding(.top, 8)
+                    .padding(.bottom, 4)
                 Spacer()
-                
-                Button(action: {
-                    engine.copyToClipboard(item)
-                }) {
-                    Label("Copy All", systemImage: "doc.on.doc")
-                }
-                .controlSize(.large)
             }
-            .padding()
-            .background(Color(NSColor.controlBackgroundColor))
-            .border(width: 1, edges: [.bottom], color: Color(NSColor.separatorColor))
+            .padding(.horizontal, 20)
+            .background(Color(NSColor.textBackgroundColor))
             
-            // Content Area
+            // Content Area - Native Text View taking remaining space
             NativeTextView(text: item.content, font: .systemFont(ofSize: 13))
                 .background(Color(NSColor.textBackgroundColor))
         }
+        .toolbar {
+            ToolbarItem(placement: .primaryAction) {
+                Button(action: {
+                    engine.copyToClipboard(item)
+                }) {
+                    Label("Copy", systemImage: "doc.on.doc")
+                }
+                .help("Copy All to Clipboard")
+            }
+            // Explicitly ensure sidebar toggle is removed if that's still an issue,
+            // though usually it lives in the leading edge.
+            ToolbarItem(placement: .navigation) {
+                // Keep empty or add spacer if needed to push things, 
+                // but standard toolbar handles this.
+                Spacer()
+            }
+        }
+        // Force remove the system sidebar toggle if it persists unwantedly
+        .toolbar(removing: .sidebarToggle)
     }
 }
 
