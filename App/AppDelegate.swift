@@ -1,6 +1,5 @@
 import SwiftUI
 import AppKit
-
 import Combine
 
 class AppDelegate: NSObject, NSApplicationDelegate {
@@ -12,9 +11,13 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         // 1. Setup Menu Bar Item
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         
-        statusItem?.button?.image = NSImage(systemSymbolName: "clipboard", accessibilityDescription: "Clip")
-        statusItem?.button?.action = #selector(togglePopover(_:))
-        statusItem?.button?.target = self
+        if let button = statusItem?.button {
+            button.image = NSImage(systemSymbolName: "clipboard", accessibilityDescription: "Clip")
+            button.action = #selector(togglePopover(_:))
+            button.target = self
+            // Initial placeholder to verify tooltip works at all
+            button.toolTip = "Clip: Loading..."
+        }
         
         // 2. Setup Popover
         let popover = NSPopover()
@@ -33,18 +36,33 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         let engine = ClipboardEngine.shared
         engine.startMonitoring()
         
+        // Subscribe to history changes for tooltip
         engine.$history
             .receive(on: DispatchQueue.main)
             .sink { [weak self] history in
-                if let first = history.first {
-                    let content = first.content.trimmingCharacters(in: .whitespacesAndNewlines)
-                    let preview = content.count > 50 ? String(content.prefix(50)) + "..." : content
-                    self?.statusItem?.button?.toolTip = "Current: \(preview)"
-                } else {
-                    self?.statusItem?.button?.toolTip = "Clip: Empty"
-                }
+                self?.updateTooltip(history.first)
             }
             .store(in: &cancellables)
+            
+        // Trigger immediate update
+        updateTooltip(engine.history.first)
+    }
+    
+    private func updateTooltip(_ item: ClipboardItem?) {
+        guard let button = statusItem?.button else { return }
+        
+        if let item = item {
+            // Simplify text processing for stability
+            let raw = item.content
+            let prefix = raw.prefix(60)
+            let cleaned = prefix.replacingOccurrences(of: "\n", with: " ")
+            let tooltipText = "Current: \(cleaned)..."
+            
+            button.toolTip = tooltipText
+            // print("Set tooltip to: \(tooltipText)") 
+        } else {
+            button.toolTip = "Clip: Empty"
+        }
     }
     
     @objc func togglePopover(_ sender: AnyObject?) {
@@ -61,7 +79,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     func showPopover(sender: AnyObject?) {
         if let button = statusItem?.button {
-            // Activate app so popover can take focus if needed, though transient usually handles fine.
+            // Activate app so popover can take focus if needed
             NSApp.activate(ignoringOtherApps: true)
             popover?.show(relativeTo: button.bounds, of: button, preferredEdge: .minY)
         }
@@ -75,7 +93,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     func application(_ application: NSApplication, open urls: [URL]) {
         for url in urls {
              if url.absoluteString.contains("open") {
-                 // The WindowGroup in ClipApp handles the window, we just need to make sure we activate
                  NSApp.activate(ignoringOtherApps: true)
              }
         }
