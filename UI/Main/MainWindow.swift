@@ -156,14 +156,13 @@ struct DetailView: View {
             ScrollView {
                 VStack(alignment: .leading) {
                     Text(item.content)
-                        .font(.system(.body, design: .monospaced))
-                        .kerning(0.5) // Slight letter spacing for readability
-                        .lineSpacing(4)
+                        .font(.system(.body)) // User requested proper system font (SF Pro)
                         .padding(20)
-                        .textSelection(.enabled) // Critical for user request
+                        .textSelection(.enabled)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .background(Color(NSColor.textBackgroundColor))
                 }
+                .frame(maxWidth: .infinity, minHeight: 300, alignment: .topLeading) // Ensure area is clickable
             }
             .background(Color(NSColor.textBackgroundColor))
         }
