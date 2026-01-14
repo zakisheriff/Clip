@@ -103,6 +103,7 @@ struct MainWindow: View {
         }
         .navigationSplitViewStyle(.balanced)
         .frame(minWidth: 700, minHeight: 500)
+        .toolbar(removing: .sidebarToggle)
     }
     
     var filteredHistory: [ClipboardItem] {
