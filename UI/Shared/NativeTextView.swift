@@ -3,6 +3,7 @@ import AppKit
 
 struct NativeTextView: NSViewRepresentable {
     var text: String
+    var attributedText: NSAttributedString? = nil // Optional rich text support
     var font: NSFont = .systemFont(ofSize: NSFont.systemFontSize)
     
     func makeNSView(context: Context) -> NSScrollView {
@@ -17,7 +18,12 @@ struct NativeTextView: NSViewRepresentable {
         textView.drawsBackground = false
         textView.font = font
         textView.textColor = .labelColor
-        textView.string = text
+        
+        if let attributedText = attributedText {
+            textView.textStorage?.setAttributedString(attributedText)
+        } else {
+            textView.string = text
+        }
         
         // Layout: Fill width, grow height
         textView.autoresizingMask = [.width]
@@ -38,8 +44,14 @@ struct NativeTextView: NSViewRepresentable {
     func updateNSView(_ nsView: NSScrollView, context: Context) {
         guard let textView = nsView.documentView as? NSTextView else { return }
         
-        if textView.string != text {
-            textView.string = text
+        if let attributedText = attributedText {
+             if textView.textStorage?.string != attributedText.string {
+                 textView.textStorage?.setAttributedString(attributedText)
+             }
+        } else {
+            if textView.string != text {
+                textView.string = text
+            }
         }
     }
 }

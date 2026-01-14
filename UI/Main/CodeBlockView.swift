@@ -45,8 +45,15 @@ struct CodeBlockView: View {
             )
             
             // Code Content
-            NativeTextView(text: item.content, font: .monospacedSystemFont(ofSize: 13, weight: .regular))
-                .background(Color(NSColor.textBackgroundColor))
+            NativeTextView(
+                text: item.content,
+                attributedText: SyntaxHighlighter.highlight(
+                    code: item.content,
+                    font: .monospacedSystemFont(ofSize: 13, weight: .regular)
+                ),
+                font: .monospacedSystemFont(ofSize: 13, weight: .regular)
+            )
+            .background(Color(NSColor.textBackgroundColor))
         }
         .background(Color(NSColor.textBackgroundColor))
         .cornerRadius(8)

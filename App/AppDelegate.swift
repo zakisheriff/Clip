@@ -31,7 +31,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
     
     @objc func togglePopover(_ sender: AnyObject?) {
-        if let button = statusItem?.button {
+        if statusItem?.button != nil {
             if let popover = popover {
                 if popover.isShown {
                     closePopover(sender: sender)

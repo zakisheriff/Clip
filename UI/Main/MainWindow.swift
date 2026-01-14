@@ -78,8 +78,8 @@ struct MainWindow: View {
             .listStyle(InsetListStyle())
             .navigationTitle(currentTitle)
             // Fix: Equalize ideal width with Detail view for 50/50 split. 
-            .navigationSplitViewColumnWidth(min: 250, ideal: 350)
-            .onChange(of: filteredHistory) { history in
+            .navigationSplitViewColumnWidth(min: 300, ideal: 400)
+            .onChange(of: filteredHistory) { _, history in
                 if selection == nil, let first = history.first {
                     selection = first.id
                 }
@@ -108,10 +108,13 @@ struct MainWindow: View {
                     .toolbar(removing: .sidebarToggle) // Apply here too
                 }
             }
+            .navigationSplitViewColumnWidth(min: 300, ideal: 400)
             // Fix: Equalize ideal width with List view (350).
         }
         .navigationSplitViewStyle(.balanced)
-        .frame(minWidth: 700, minHeight: 500)
+        .frame(minWidth: 1000, minHeight: 600)
+        // Force remove the system sidebar toggle if it persists unwantedly
+        .toolbar(removing: .sidebarToggle)
     }
     
     var currentTitle: String {
@@ -179,12 +182,7 @@ struct DetailView: View {
                         .background(Color(NSColor.textBackgroundColor))
                 }
             }
-            .navigationSplitViewColumnWidth(min: 250, ideal: 500)
         }
-        .navigationSplitViewStyle(.balanced)
-        .frame(minWidth: 900, minHeight: 600)
-        // Force remove the system sidebar toggle if it persists unwantedly
-        .toolbar(removing: .sidebarToggle)
     }
 }
 
