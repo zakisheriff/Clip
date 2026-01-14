@@ -83,25 +83,25 @@ struct MainWindow: View {
             }
             
         } detail: {
-            if let selectedId = selection, 
-               let item = engine.history.first(where: { $0.id == selectedId }) {
-                DetailView(item: item)
-                    // Fix: Force detail view to be wide/flexible.
-                    .navigationSplitViewColumnWidth(min: 400, ideal: 600, max: .infinity)
-            } else {
-                VStack(spacing: 12) {
-                    Image(systemName: "doc.on.clipboard")
-                        .font(.system(size: 40))
-                        .foregroundColor(.secondary.opacity(0.3))
-                    Text("Select an item to view details")
-                        .font(.title3)
-                        .foregroundColor(.secondary)
+            ZStack {
+                if let selectedId = selection, 
+                   let item = engine.history.first(where: { $0.id == selectedId }) {
+                    DetailView(item: item)
+                } else {
+                    VStack(spacing: 12) {
+                        Image(systemName: "doc.on.clipboard")
+                            .font(.system(size: 40))
+                            .foregroundColor(.secondary.opacity(0.3))
+                        Text("Select an item to view details")
+                            .font(.title3)
+                            .foregroundColor(.secondary)
+                    }
                 }
-                .navigationSplitViewColumnWidth(min: 400, ideal: 600, max: .infinity)
             }
+            .navigationSplitViewColumnWidth(min: 400, ideal: 600, max: .infinity)
         }
         .navigationSplitViewStyle(.balanced)
-        .frame(minWidth: 900, minHeight: 600) // Larger default window
+        .frame(minWidth: 1000, minHeight: 700)
     }
     
     var filteredHistory: [ClipboardItem] {
