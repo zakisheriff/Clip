@@ -69,8 +69,9 @@ struct MainWindow: View {
             }
             .listStyle(InsetListStyle())
             .navigationTitle(filter?.rawValue.capitalized ?? "All Items")
-            // Fix: Constrain the list width so it doesn't take over. Max 450 prevents it from being "full space".
-            .navigationSplitViewColumnWidth(min: 250, ideal: 350, max: 450)
+            // Fix: Remove ALL strict 'max' or 'min' constraints that might fight the animation.
+            // Just hint at the ideal size.
+            .navigationSplitViewColumnWidth(ideal: 300)
             .onChange(of: filteredHistory) { history in
                 if selection == nil, let first = history.first {
                     selection = first.id
@@ -98,7 +99,9 @@ struct MainWindow: View {
                     }
                 }
             }
-            .navigationSplitViewColumnWidth(min: 400, ideal: 600, max: .infinity)
+            // Fix: Remove 'min' entirely so it can shrink to 0 if needed during animation.
+            // 'ideal' stays high to suggest taking up space.
+            .navigationSplitViewColumnWidth(ideal: 600)
         }
         .navigationSplitViewStyle(.balanced)
         .frame(minWidth: 1000, minHeight: 700)
@@ -125,7 +128,7 @@ struct DetailView: View {
     
     var body: some View {
         VStack(spacing: 0) {
-            // Header Bar
+            // Header Bar (Metadata Only)
             HStack {
                 VStack(alignment: .leading) {
                     Text(item.type.rawValue.uppercased())
@@ -138,19 +141,12 @@ struct DetailView: View {
                 }
                 
                 Spacer()
-                
-                Button(action: {
-                    engine.copyToClipboard(item)
-                }) {
-                    Label("Copy Full Content", systemImage: "doc.on.doc")
-                }
-                .controlSize(.large)
             }
             .padding()
             .background(Color(NSColor.controlBackgroundColor))
             .border(width: 1, edges: [.bottom], color: Color(NSColor.separatorColor))
             
-            // Content Area - Improved for reading and selecting
+            // Content Area
             ScrollView {
                 VStack(alignment: .leading) {
                     Text(item.content)
@@ -164,6 +160,16 @@ struct DetailView: View {
                 }
             }
             .background(Color(NSColor.textBackgroundColor))
+        }
+        .toolbar {
+            ToolbarItem(placement: .primaryAction) {
+                Button(action: {
+                    engine.copyToClipboard(item)
+                }) {
+                    Label("Copy All", systemImage: "doc.on.doc")
+                }
+                .help("Copy content to clipboard")
+            }
         }
     }
 }
