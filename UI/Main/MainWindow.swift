@@ -69,7 +69,8 @@ struct MainWindow: View {
             }
             .listStyle(InsetListStyle())
             .navigationTitle(filter?.rawValue.capitalized ?? "All Items")
-            .navigationSplitViewColumnWidth(min: 250, ideal: 300)
+            // Fix: Constrain the list width so it doesn't take over. Max 450 prevents it from being "full space".
+            .navigationSplitViewColumnWidth(min: 250, ideal: 350, max: 450)
             .onChange(of: filteredHistory) { history in
                 if selection == nil, let first = history.first {
                     selection = first.id
@@ -85,6 +86,8 @@ struct MainWindow: View {
             if let selectedId = selection, 
                let item = engine.history.first(where: { $0.id == selectedId }) {
                 DetailView(item: item)
+                    // Fix: Force detail view to be wide/flexible.
+                    .navigationSplitViewColumnWidth(min: 400, ideal: 600, max: .infinity)
             } else {
                 VStack(spacing: 12) {
                     Image(systemName: "doc.on.clipboard")
@@ -94,6 +97,7 @@ struct MainWindow: View {
                         .font(.title3)
                         .foregroundColor(.secondary)
                 }
+                .navigationSplitViewColumnWidth(min: 400, ideal: 600, max: .infinity)
             }
         }
         .navigationSplitViewStyle(.balanced)
