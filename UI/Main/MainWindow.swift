@@ -1,26 +1,33 @@
 import SwiftUI
 
 struct MainWindow: View {
+    enum SidebarFilter: Hashable {
+        case all
+        case type(ClipboardType)
+    }
+
     @ObservedObject var engine = ClipboardEngine.shared
     @State private var selection: ClipboardItem.ID?
-    @State private var filter: ClipboardType? // If nil, show all
+    @State private var sidebarFilter: SidebarFilter? = .all // Default to .all
     @State private var columnVisibility = NavigationSplitViewVisibility.all
     
     var body: some View {
         NavigationSplitView(columnVisibility: $columnVisibility) {
-            List(selection: $filter) {
-                NavigationLink(value: nil as ClipboardType?) {
-                    Label("All Items", systemImage: "tray.full")
+            List(selection: $sidebarFilter) {
+                // FIXED: Use a concrete enum case for "All Items" so it mimics a selectable item.
+                // Updated icon to 'doc.on.clipboard' as requested.
+                NavigationLink(value: SidebarFilter.all) {
+                    Label("All Items", systemImage: "doc.on.clipboard")
                 }
                 
                 Section("Types") {
-                    NavigationLink(value: ClipboardType.text) {
+                    NavigationLink(value: SidebarFilter.type(.text)) {
                         Label("Text", systemImage: "text.alignleft")
                     }
-                    NavigationLink(value: ClipboardType.url) {
+                    NavigationLink(value: SidebarFilter.type(.url)) {
                         Label("Links", systemImage: "link")
                     }
-                    NavigationLink(value: ClipboardType.code) {
+                    NavigationLink(value: SidebarFilter.type(.code)) {
                         Label("Code", systemImage: "chevron.left.forwardslash.chevron.right")
                     }
                 }
@@ -68,7 +75,8 @@ struct MainWindow: View {
                 }
             }
             .listStyle(InsetListStyle())
-            .navigationTitle(filter?.rawValue.capitalized ?? "All Items")
+            .listStyle(InsetListStyle())
+            .navigationTitle(currentTitle)
             // Fix: Equalize ideal width with Detail view for 50/50 split. 
             .navigationSplitViewColumnWidth(min: 250, ideal: 350)
             .onChange(of: filteredHistory) { history in
@@ -106,11 +114,20 @@ struct MainWindow: View {
         .toolbar(removing: .sidebarToggle)
     }
     
-    var filteredHistory: [ClipboardItem] {
-        if let type = filter {
-            return engine.history.filter { $0.type == type }
+    var currentTitle: String {
+        switch sidebarFilter {
+        case .type(let type): return type.rawValue.capitalized
+        case .all, .none: return "All Items"
         }
-        return engine.history
+    }
+
+    var filteredHistory: [ClipboardItem] {
+        switch sidebarFilter {
+        case .type(let type):
+            return engine.history.filter { $0.type == type }
+        case .all, .none:
+            return engine.history
+        }
     }
     
     func timeString(date: Date) -> String {
