@@ -9,10 +9,10 @@ struct MainWindow: View {
     @ObservedObject var engine = ClipboardEngine.shared
     @State private var selection: ClipboardItem.ID?
     @State private var sidebarFilter: SidebarFilter? = .all // Default to .all
-    @State private var columnVisibility = NavigationSplitViewVisibility.all
+    // Removed columnVisibility state to prevent system from forcing the toggle button
     
     var body: some View {
-        NavigationSplitView(columnVisibility: $columnVisibility) {
+        NavigationSplitView {
             List(selection: $sidebarFilter) {
                 // FIXED: Use a concrete enum case for "All Items" so it mimics a selectable item.
                 // Updated icon to 'doc.on.clipboard' as requested.
@@ -170,18 +170,8 @@ struct DetailView: View {
             .border(width: 1, edges: [.bottom], color: Color(NSColor.separatorColor))
             
             // Content Area
-            ScrollView {
-                VStack(alignment: .leading) {
-                    Text(item.content)
-                        .font(.system(.body)) // User requested proper system font (SF Pro)
-                        .padding(20)
-                        .textSelection(.enabled)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .background(Color(NSColor.textBackgroundColor))
-                }
-                .frame(maxWidth: .infinity, minHeight: 300, alignment: .topLeading) // Ensure area is clickable
-            }
-            .background(Color(NSColor.textBackgroundColor))
+            NativeTextView(text: item.content, font: .systemFont(ofSize: 13))
+                .background(Color(NSColor.textBackgroundColor))
         }
     }
 }
