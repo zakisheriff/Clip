@@ -171,14 +171,9 @@ struct DetailView: View {
                                 withAnimation { isCopied = false }
                             }
                         }) {
-                            HStack(spacing: 4) {
-                                Image(systemName: isCopied ? "checkmark" : "doc.on.doc")
-                                if isCopied {
-                                    Text("Copied")
-                                        .font(.caption)
-                                }
-                            }
-                            .foregroundColor(isCopied ? .green : .secondary)
+                            Image(systemName: isCopied ? "checkmark" : "doc.on.doc")
+                                .font(.system(size: 14)) // Ensure consistent size
+                                .foregroundColor(.secondary)
                         }
                         .buttonStyle(.borderless)
                         .controlSize(.small)
