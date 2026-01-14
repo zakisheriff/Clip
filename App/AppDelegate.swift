@@ -9,11 +9,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         // 1. Setup Menu Bar Item
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         
-        if let button = statusItem?.button {
-            button.image = NSImage(systemSymbolName: "clipboard", accessibilityDescription: "Clipboard")
-            button.action = #selector(togglePopover(_:))
-            button.target = self
-        }
+        statusItem?.button?.image = NSImage(systemSymbolName: "clipboard", accessibilityDescription: "Clip")
+        statusItem?.button?.action = #selector(togglePopover(_:))
+        statusItem?.button?.target = self
         
         // 2. Setup Popover
         let popover = NSPopover()
