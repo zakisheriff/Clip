@@ -179,7 +179,10 @@ struct DetailView: View {
                         .background(Color(NSColor.textBackgroundColor))
                 }
             }
+            .navigationSplitViewColumnWidth(min: 250, ideal: 500)
         }
+        .navigationSplitViewStyle(.balanced)
+        .frame(minWidth: 900, minHeight: 600)
         // Force remove the system sidebar toggle if it persists unwantedly
         .toolbar(removing: .sidebarToggle)
     }
