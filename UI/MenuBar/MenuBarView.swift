@@ -30,11 +30,8 @@ struct MenuBarView: View {
             ScrollView {
                 LazyVStack(spacing: 0) {
                     ForEach(filteredHistory) { item in
-                        ClipboardRow(item: item)
+                        ClipboardRow(item: item, onCopy: copyAndClose)
                             .contentShape(Rectangle())
-                            .onTapGesture {
-                                copyAndClose(item)
-                            }
                             .padding(.horizontal, 8)
                     }
                     

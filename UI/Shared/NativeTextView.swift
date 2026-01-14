@@ -19,6 +19,9 @@ struct NativeTextView: NSViewRepresentable {
         textView.font = font
         textView.textColor = .labelColor
         
+        // Link Detection
+        textView.isAutomaticLinkDetectionEnabled = true
+        
         if let attributedText = attributedText {
             textView.textStorage?.setAttributedString(attributedText)
         } else {
