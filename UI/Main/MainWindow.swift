@@ -109,7 +109,6 @@ struct MainWindow: View {
                 }
             }
             // Fix: Equalize ideal width with List view (350).
-            .navigationSplitViewColumnWidth(min: 300, ideal: 350)
         }
         .navigationSplitViewStyle(.balanced)
         .frame(minWidth: 700, minHeight: 500)
