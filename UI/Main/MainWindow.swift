@@ -144,38 +144,41 @@ struct DetailView: View {
     @ObservedObject var engine = ClipboardEngine.shared
     
     var body: some View {
-        VStack(spacing: 0) {
-            // Notes-style Metadata Header (Subtle, centered or leading)
-            HStack {
-                Text("\(item.type.rawValue.uppercased()) • \(item.characterCount) chars")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-                    .padding(.top, 8)
-                    .padding(.bottom, 4)
-                Spacer()
-            }
-            .padding(.horizontal, 20)
-            .background(Color(NSColor.textBackgroundColor))
-            
-            // Content Area - Native Text View taking remaining space
-            NativeTextView(text: item.content, font: .systemFont(ofSize: 13))
-                .background(Color(NSColor.textBackgroundColor))
-        }
-        .toolbar {
-            ToolbarItem(placement: .primaryAction) {
-                Button(action: {
-                    engine.copyToClipboard(item)
-                }) {
-                    Label("Copy", systemImage: "doc.on.doc")
+        Group {
+            if item.type == .code {
+                CodeBlockView(item: item)
+            } else {
+                // Standard Notes-style for Text/Links
+                VStack(spacing: 0) {
+                    // Notes-style Metadata Header (Subtle, centered or leading)
+                    HStack {
+                        Text("\(item.type.rawValue.uppercased()) • \(item.characterCount) chars")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                            .padding(.top, 8)
+                            .padding(.bottom, 4)
+                        Spacer()
+                    }
+                    .padding(.horizontal, 20)
+                    .background(Color(NSColor.textBackgroundColor))
+                    
+                    // Content Area - Native Text View taking remaining space
+                    NativeTextView(text: item.content, font: .systemFont(ofSize: 13))
+                        .background(Color(NSColor.textBackgroundColor))
                 }
-                .help("Copy All to Clipboard")
-            }
-            // Explicitly ensure sidebar toggle is removed if that's still an issue,
-            // though usually it lives in the leading edge.
-            ToolbarItem(placement: .navigation) {
-                // Keep empty or add spacer if needed to push things, 
-                // but standard toolbar handles this.
-                Spacer()
+                .toolbar {
+                    ToolbarItem(placement: .primaryAction) {
+                        Button(action: {
+                            engine.copyToClipboard(item)
+                        }) {
+                            Label("Copy", systemImage: "doc.on.doc")
+                        }
+                        .help("Copy All to Clipboard")
+                    }
+                    ToolbarItem(placement: .navigation) {
+                        Spacer()
+                    }
+                }
             }
         }
         // Force remove the system sidebar toggle if it persists unwantedly
