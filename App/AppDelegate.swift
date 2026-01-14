@@ -17,7 +17,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         let popover = NSPopover()
         popover.contentSize = NSSize(width: 320, height: 400)
         popover.behavior = .transient // Closes on click-away
-        popover.animates = true
+        popover.animates = false // Disable animation for snappy "native" feel
         
         // Inject dependencies
         popover.contentViewController = NSHostingController(rootView: MenuBarView(closeAction: { [weak self] in
