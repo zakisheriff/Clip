@@ -144,6 +144,7 @@ struct MainWindow: View {
 struct DetailView: View {
     let item: ClipboardItem
     @ObservedObject var engine = ClipboardEngine.shared
+    @State private var isCopied = false
     
     var body: some View {
         Group {
@@ -162,14 +163,24 @@ struct DetailView: View {
                         
                         Spacer()
                         
-                        // Inline Copy Button (Restored)
+                        // Inline Copy Button with Feedback
                         Button(action: {
                             engine.copyToClipboard(item)
+                            withAnimation { isCopied = true }
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                                withAnimation { isCopied = false }
+                            }
                         }) {
-                            Label("Copy", systemImage: "doc.on.doc")
-                                .labelStyle(.iconOnly) // Keep it minimal to prevent overflow
+                            HStack(spacing: 4) {
+                                Image(systemName: isCopied ? "checkmark" : "doc.on.doc")
+                                if isCopied {
+                                    Text("Copied")
+                                        .font(.caption)
+                                }
+                            }
+                            .foregroundColor(isCopied ? .green : .secondary)
                         }
-                        .buttonStyle(.borderless) // Less intrusive than .plain or .bordered
+                        .buttonStyle(.borderless)
                         .controlSize(.small)
                         .help("Copy content")
                         .padding(.top, 4)
