@@ -62,9 +62,6 @@ struct SyntaxHighlighter {
         
         return attributedString
     }
-        
-        return attributedString
-    }
     
     private static func applyPattern(_ pattern: String, to string: NSMutableAttributedString, color: NSColor) {
         let regex = try? NSRegularExpression(pattern: pattern, options: [])
