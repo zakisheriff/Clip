@@ -3,6 +3,7 @@ import SwiftUI
 struct CodeBlockView: View {
     let item: ClipboardItem
     @ObservedObject var engine = ClipboardEngine.shared
+    @State private var isCopied = false
     
     var body: some View {
         VStack(spacing: 0) {
@@ -16,19 +17,26 @@ struct CodeBlockView: View {
                 
                 Button(action: {
                     engine.copyToClipboard(item)
+                    withAnimation { isCopied = true }
+                    
+                    // Reset after 2 seconds
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                        withAnimation { isCopied = false }
+                    }
                 }) {
-                    HStack(spacing: 4) {
-                        Image(systemName: "doc.on.doc")
-                        Text("Copy code")
+                    HStack(spacing: 6) {
+                        Image(systemName: isCopied ? "checkmark" : "doc.on.doc")
+                        Text(isCopied ? "Copied!" : "Copy code")
+                            .frame(minWidth: 60, alignment: .leading) // Fixed width to prevent layout jump
                     }
                     .font(.caption)
-                    .foregroundColor(.secondary)
+                    .foregroundColor(isCopied ? .green : .secondary)
                 }
                 .buttonStyle(.plain)
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 10)
-            .background(Color(NSColor.controlBackgroundColor)) // Slightly darker header
+            .background(Color(NSColor.controlBackgroundColor))
             .overlay(
                 Rectangle()
                     .frame(height: 1)
