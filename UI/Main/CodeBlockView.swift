@@ -26,11 +26,11 @@ struct CodeBlockView: View {
                 }) {
                     HStack(spacing: 6) {
                         Image(systemName: isCopied ? "checkmark" : "doc.on.doc")
-                        Text(isCopied ? "Copied!" : "Copy code")
-                            .frame(minWidth: 60, alignment: .leading) // Fixed width to prevent layout jump
+                        Text(isCopied ? "Copied" : "Copy code")
+                            .frame(minWidth: 60, alignment: .trailing) // Align trailing to keep icon stable
                     }
                     .font(.caption)
-                    .foregroundColor(isCopied ? .green : .secondary)
+                    .foregroundColor(.secondary) // User requested "same color", not green
                 }
                 .buttonStyle(.plain)
             }

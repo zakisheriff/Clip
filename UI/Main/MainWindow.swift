@@ -157,7 +157,20 @@ struct DetailView: View {
                             .foregroundColor(.secondary)
                             .padding(.top, 8)
                             .padding(.bottom, 4)
+                        
                         Spacer()
+                        
+                        // Inline Copy Button (Restored)
+                        Button(action: {
+                            engine.copyToClipboard(item)
+                        }) {
+                            Label("Copy", systemImage: "doc.on.doc")
+                                .labelStyle(.iconOnly) // Keep it minimal to prevent overflow
+                        }
+                        .buttonStyle(.borderless) // Less intrusive than .plain or .bordered
+                        .controlSize(.small)
+                        .help("Copy content")
+                        .padding(.top, 4)
                     }
                     .padding(.horizontal, 20)
                     .background(Color(NSColor.textBackgroundColor))
@@ -165,19 +178,6 @@ struct DetailView: View {
                     // Content Area - Native Text View taking remaining space
                     NativeTextView(text: item.content, font: .systemFont(ofSize: 13))
                         .background(Color(NSColor.textBackgroundColor))
-                }
-                .toolbar {
-                    ToolbarItem(placement: .primaryAction) {
-                        Button(action: {
-                            engine.copyToClipboard(item)
-                        }) {
-                            Label("Copy", systemImage: "doc.on.doc")
-                        }
-                        .help("Copy All to Clipboard")
-                    }
-                    ToolbarItem(placement: .navigation) {
-                        Spacer()
-                    }
                 }
             }
         }
