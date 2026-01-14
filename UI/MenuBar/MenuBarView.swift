@@ -52,7 +52,7 @@ struct MenuBarView: View {
             
             // Footer
             HStack {
-                Button("Open Clipboard") {
+                Button("Open Clip") {
                     openMainWindow()
                     closeAction()
                 }
@@ -89,8 +89,11 @@ struct MenuBarView: View {
     }
     
     func openMainWindow() {
-        // We will notify App via notification center or similar if needed, 
-        // but can also just open URL which App handles
+        // Force activation immediately
+        NSApp.activate(ignoringOtherApps: true)
+        
+        // Use URL scheme to trigger WindowGroup if needed (requires Info.plist registration)
+        // If not registered, activation above handles focus if window is already open.
         if let url = URL(string: "clipapp://open") {
             NSWorkspace.shared.open(url)
         }
