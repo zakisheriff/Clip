@@ -19,13 +19,14 @@ struct NativeTextView: NSViewRepresentable {
         textView.font = font
         textView.textColor = .labelColor
         
-        // Link Detection
+        // Link Detection (Automatic is flaky on read-only, we do it manually)
         textView.isAutomaticLinkDetectionEnabled = true
         
         if let attributedText = attributedText {
             textView.textStorage?.setAttributedString(attributedText)
         } else {
-            textView.string = text
+            // Manual link detection
+            textView.textStorage?.setAttributedString(linkify(text: text, font: font))
         }
         
         // Layout: Fill width, grow height
@@ -53,8 +54,30 @@ struct NativeTextView: NSViewRepresentable {
              }
         } else {
             if textView.string != text {
-                textView.string = text
+                 textView.textStorage?.setAttributedString(linkify(text: text, font: font))
             }
         }
+    }
+    
+    private func linkify(text: String, font: NSFont) -> NSAttributedString {
+        let attributedString = NSMutableAttributedString(string: text, attributes: [
+            .font: font,
+            .foregroundColor: NSColor.labelColor
+        ])
+        
+        let types: NSTextCheckingResult.CheckingType = [.link]
+        guard let detector = try? NSDataDetector(types: types.rawValue) else {
+            return attributedString
+        }
+        
+        let range = NSRange(location: 0, length: text.utf16.count)
+        detector.enumerateMatches(in: text, options: [], range: range) { result, _, _ in
+            if let url = result?.url, let matchRange = result?.range {
+                attributedString.addAttribute(.link, value: url, range: matchRange)
+                attributedString.addAttribute(.foregroundColor, value: NSColor.linkColor, range: matchRange)
+            }
+        }
+        
+        return attributedString
     }
 }
