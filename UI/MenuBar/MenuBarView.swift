@@ -3,7 +3,7 @@ import SwiftUI
 struct MenuBarView: View {
     @ObservedObject var engine = ClipboardEngine.shared
     @State private var searchText = ""
-    @Environment(\.colorScheme) var colorScheme
+    @Environment(\.openWindow) private var openWindow
     
     // Callback to close popover
     var closeAction: () -> Void
@@ -92,11 +92,8 @@ struct MenuBarView: View {
         // Force activation immediately
         NSApp.activate(ignoringOtherApps: true)
         
-        // Use URL scheme to trigger WindowGroup if needed (requires Info.plist registration)
-        // If not registered, activation above handles focus if window is already open.
-        if let url = URL(string: "clipapp://open") {
-            NSWorkspace.shared.open(url)
-        }
+        // Use native SwiftUI openWindow (macOS 13+) to reliably summon the WindowGroup
+        openWindow(id: "mainWindow")
     }
 }
 
