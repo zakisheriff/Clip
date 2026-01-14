@@ -1,7 +1,7 @@
 # <div align="center">Clip</div>
 
 <div align="center">
-<strong>100% Native macOS Clipboard Manager.</strong>
+<strong>100% Native macOS Clipboard Manager</strong>
 </div>
 
 <br />
@@ -14,16 +14,13 @@
 ![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)
 
 <br />
-<br />
-
-</div>
-
-<br />
 
 > **"The clipboard manager Apple forgot to ship."**
 >
 > Clip isn't just another utility; it's a native extension of your Mac.  
 > Built with SwiftUI and AppKit, it respects every system behavior, animation, and guideline.
+
+</div>
 
 ---
 
@@ -39,53 +36,38 @@ Clip's mission is to be:
 
 ## ✨ Features
 
-- **Dual Mode Interface**  
-  - **Menu Bar**: Quick access popover for transient interactions.
-  - **Full Window**: Deep browsing, categorization, and management.
+### Smart Clipboard Engine
+- **Intelligent Monitoring** — Efficiently tracks `NSPasteboard` without draining battery.
+- **Smart Detection** — Automatically categorizes copied content:
+  - **Links**: URLs are detected instantly.
+  - **Code**: Snippets are identified and syntax-highlighted (in future updates).
+  - **Text**: Standard text is preserved with formatting.
+- **Privacy First** — All data is stored locally using sandboxed persistence.
 
-- **Smart Clipboard Engine**  
-  - Monitors `NSPasteboard` changes efficiently.
-  - Automatically identifies Text, Links, and Code snippets.
-  - Ignores duplicates and trims history automatically.
+### Dual Mode Interface
 
-- **Native Design**  
-  - SF Pro typography.
-  - Vibrancy and blur materials matching macOS.
-  - Full Dark Mode support.
+#### 1. Menu Bar Experience
+- **Quick Access** — One click to see recent history.
+- **Transient Popover** — Opens instantly, closes when you click away.
+- **Keyboard Navigation** — Built for speed.
 
----
-
-## 🎨 Design Philosophy
-
-- **No Electron**  
-  Built strictly with Swift. 10MB app size vs 200MB+.
-
-- **No Custom UIs**  
-  If a native control exists, we use it. This ensures future-proofing and accessibility.
-
-- **Apple Silicon First**  
-  Optimized for M-series chips for instant launch and zero lag.
+#### 2. Full Application Window
+- **Deep Browsing** — Search, filter, and organize your entire history.
+- **Categorization** — Filter by Text, Links, or Code.
+- **Detail View** — Full-width preview for long content.
 
 ---
 
-## 📁 Project Structure
+## 🎨 Apple-Inspired Design
 
-```
-Clip/
-├── App/                          # Application Lifecycle
-│   ├── AppDelegate.swift         # NSStatusItem & Popover logic
-│   └── ClipApp.swift             # Entry point
-├── Model/                        # Core Data Structures
-│   └── ClipboardItem.swift       # The atomic unit of history
-├── Engine/                       # Business Logic
-│   ├── ClipboardEngine.swift     # NSPasteboard monitoring
-│   └── Persistence.swift         # UserDefaults storage
-└── UI/                           # SwiftUI Views
-    ├── MenuBar/                  # Transient Popover
-    ├── Main/                     # Full Window Interface
-    ├── Settings/                 # Preferences Panel
-    └── Shared/                   # Reusable Components
-```
+- **SF Pro Typography**  
+  Uses the system font stack for perfect legibility.
+
+- **Vibrant Materials**  
+  Uses `NSVisualEffectView` materials (popover, sidebar, behind-window) to match macOS aesthetics.
+
+- **Adaptive Colors**  
+  Looks perfect in both Light and Dark modes.
 
 ---
 
@@ -115,8 +97,9 @@ cd Clip
 
 - **Swift** — Core language.
 - **SwiftUI** — 95% of the UI (NavigationSplitView, Lists).
-- **AppKit** — For precise window management, NSStatusItem, and NSPopover.
+- **AppKit** — For precise window management, `NSStatusItem`, and `NSPopover`.
 - **Combine** — Reactive updates from the Clipboard Engine.
+- **NSDataDetector** — For robust content type analysis.
 
 ---
 

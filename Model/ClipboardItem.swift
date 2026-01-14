@@ -27,15 +27,30 @@ struct ClipboardItem: Identifiable, Codable, Hashable {
     
     // Helper to determine type
     static func detectType(for string: String) -> ClipboardType {
-        // Simple heuristic
-        if let url = URL(string: string), url.scheme != nil, url.host != nil {
-            return .url
+        // 1. Robust Link Detection using NSDataDetector
+        if let detector = try? NSDataDetector(types: NSTextCheckingResult.CheckingType.link.rawValue) {
+            let range = NSRange(location: 0, length: string.utf16.count)
+            let matches = detector.matches(in: string, options: [], range: range)
+            
+            // If the *entire* string is roughly a URL, or the first match covers most of it
+            if let match = matches.first {
+                if match.range.location == 0 && match.range.length == string.utf16.count {
+                     return .url
+                }
+                // Allow "loose" URLs if they are just the URL
+                if string.trimmingCharacters(in: .whitespacesAndNewlines).hasPrefix("http") {
+                    return .url
+                }
+            }
         }
         
-        // Very basic code detection (look for braces, func, var, common keywords)
-        let codeIndicators = ["func ", "var ", "let ", "import ", "{", "}", "class ", "struct ", "def ", "return ", ";"]
-        let count = codeIndicators.filter { string.contains($0) }.count
-        if count >= 3 {
+        // 2. Code Detection Heuristics
+        // Look for syntax characters common in C-style, Swift, Python, JS, etc.
+        let codeSignals = ["func ", "var ", "let ", "const ", "import ", "class ", "struct ", "def ", "return", "print(", "console.log", "=>", "UI", "NS", ";", "{", "}", "()", "//", "#include"]
+        let signalCount = codeSignals.filter { string.contains($0) }.count
+        
+        // If it has enough keywords OR structured braces/semi-colons
+        if signalCount >= 2 || (string.contains("{") && string.contains("}")) || string.contains("    ") { // indent detection
             return .code
         }
         

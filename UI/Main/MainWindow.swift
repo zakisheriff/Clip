@@ -34,7 +34,7 @@ struct MainWindow: View {
                 ForEach(filteredHistory) { item in
                     VStack(alignment: .leading, spacing: 6) {
                         Text(item.content)
-                            .lineLimit(3) // Show more lines in the list
+                            .lineLimit(3)
                             .font(.system(size: 13))
                             .foregroundColor(.primary)
                         
@@ -70,6 +70,16 @@ struct MainWindow: View {
             .listStyle(InsetListStyle())
             .navigationTitle(filter?.rawValue.capitalized ?? "All Items")
             .navigationSplitViewColumnWidth(min: 250, ideal: 300)
+            .onChange(of: filteredHistory) { history in
+                if selection == nil, let first = history.first {
+                    selection = first.id
+                }
+            }
+            .onAppear {
+                if selection == nil, let first = filteredHistory.first {
+                    selection = first.id
+                }
+            }
             
         } detail: {
             if let selectedId = selection, 
