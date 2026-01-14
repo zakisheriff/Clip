@@ -15,9 +15,9 @@ struct MainWindow: View {
         NavigationSplitView {
             List(selection: $sidebarFilter) {
                 // FIXED: Use a concrete enum case for "All Items" so it mimics a selectable item.
-                // Updated icon to 'doc.on.clipboard' as requested.
+                // Updated icon to 'clipboard' as requested.
                 NavigationLink(value: SidebarFilter.all) {
-                    Label("All Items", systemImage: "doc.on.clipboard")
+                    Label("All Items", systemImage: "clipboard")
                 }
                 
                 Section("Types") {
@@ -97,7 +97,7 @@ struct MainWindow: View {
                     DetailView(item: item)
                 } else {
                     VStack(spacing: 12) {
-                        Image(systemName: "doc.on.clipboard")
+                        Image(systemName: "clipboard")
                             .font(.system(size: 40))
                             .foregroundColor(.secondary.opacity(0.3))
                         Text("Select an item to view details")
