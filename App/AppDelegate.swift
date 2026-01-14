@@ -1,9 +1,12 @@
 import SwiftUI
 import AppKit
 
+import Combine
+
 class AppDelegate: NSObject, NSApplicationDelegate {
     var statusItem: NSStatusItem?
     var popover: NSPopover?
+    private var cancellables = Set<AnyCancellable>()
     
     func applicationDidFinishLaunching(_ notification: Notification) {
         // 1. Setup Menu Bar Item
@@ -26,8 +29,22 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         
         self.popover = popover
         
-        // 3. Start Engine
-        ClipboardEngine.shared.startMonitoring()
+        // 3. Start Engine & Setup Tooltip Observer
+        let engine = ClipboardEngine.shared
+        engine.startMonitoring()
+        
+        engine.$history
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] history in
+                if let first = history.first {
+                    let content = first.content.trimmingCharacters(in: .whitespacesAndNewlines)
+                    let preview = content.count > 50 ? String(content.prefix(50)) + "..." : content
+                    self?.statusItem?.button?.toolTip = "Current: \(preview)"
+                } else {
+                    self?.statusItem?.button?.toolTip = "Clip: Empty"
+                }
+            }
+            .store(in: &cancellables)
     }
     
     @objc func togglePopover(_ sender: AnyObject?) {
