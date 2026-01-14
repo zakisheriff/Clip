@@ -15,9 +15,9 @@ struct MainWindow: View {
         NavigationSplitView {
             List(selection: $sidebarFilter) {
                 // FIXED: Use a concrete enum case for "All Items" so it mimics a selectable item.
-                // Updated icon to 'clipboard' as requested.
+                // Reverted icon to 'doc.on.clipboard' to match user preference.
                 NavigationLink(value: SidebarFilter.all) {
-                    Label("All Items", systemImage: "clipboard")
+                    Label("All Items", systemImage: "doc.on.clipboard")
                 }
                 
                 Section("Types") {
@@ -95,15 +95,17 @@ struct MainWindow: View {
                 if let selectedId = selection, 
                    let item = engine.history.first(where: { $0.id == selectedId }) {
                     DetailView(item: item)
+                        .toolbar(removing: .sidebarToggle) // MOVED HERE to force removal
                 } else {
                     VStack(spacing: 12) {
-                        Image(systemName: "clipboard")
+                        Image(systemName: "doc.on.clipboard")
                             .font(.system(size: 40))
                             .foregroundColor(.secondary.opacity(0.3))
                         Text("Select an item to view details")
                             .font(.title3)
                             .foregroundColor(.secondary)
                     }
+                    .toolbar(removing: .sidebarToggle) // Apply here too
                 }
             }
             // Fix: Equalize ideal width with List view (350).
@@ -111,7 +113,6 @@ struct MainWindow: View {
         }
         .navigationSplitViewStyle(.balanced)
         .frame(minWidth: 700, minHeight: 500)
-        .toolbar(removing: .sidebarToggle)
     }
     
     var currentTitle: String {
