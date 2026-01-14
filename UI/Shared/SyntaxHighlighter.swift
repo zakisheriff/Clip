@@ -7,11 +7,8 @@ struct SyntaxHighlighter {
             .foregroundColor: NSColor.labelColor
         ])
         
-        let wholeRange = NSRange(location: 0, length: code.utf16.count)
-        
         // Definitions for colors (Inspired by standard VSCode/Xcode themes)
         let keywordColor = NSColor.systemPink // const, let, var, if, func
-        let functionColor = NSColor.systemPurple // functions, methods
         let stringColor = NSColor.systemRed // "string"
         let numberColor = NSColor.systemBlue // 123
         let commentColor = NSColor.systemGray // // comment

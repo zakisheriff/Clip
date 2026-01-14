@@ -4,6 +4,7 @@ struct MenuBarView: View {
     @ObservedObject var engine = ClipboardEngine.shared
     @State private var searchText = ""
     @Environment(\.openWindow) private var openWindow
+    @Environment(\.colorScheme) var colorScheme
     
     // Callback to close popover
     var closeAction: () -> Void
