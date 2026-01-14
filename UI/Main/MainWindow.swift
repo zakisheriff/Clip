@@ -69,9 +69,8 @@ struct MainWindow: View {
             }
             .listStyle(InsetListStyle())
             .navigationTitle(filter?.rawValue.capitalized ?? "All Items")
-            // Fix: Remove ALL strict 'max' or 'min' constraints that might fight the animation.
-            // Just hint at the ideal size.
-            .navigationSplitViewColumnWidth(ideal: 300)
+            // Fix: Equalize ideal width with Detail view for 50/50 split. 
+            .navigationSplitViewColumnWidth(min: 250, ideal: 350)
             .onChange(of: filteredHistory) { history in
                 if selection == nil, let first = history.first {
                     selection = first.id
@@ -99,12 +98,11 @@ struct MainWindow: View {
                     }
                 }
             }
-            // Fix: Remove 'min' entirely so it can shrink to 0 if needed during animation.
-            // 'ideal' stays high to suggest taking up space.
-            .navigationSplitViewColumnWidth(ideal: 600)
+            // Fix: Equalize ideal width with List view (350).
+            .navigationSplitViewColumnWidth(min: 300, ideal: 350)
         }
         .navigationSplitViewStyle(.balanced)
-        .frame(minWidth: 1000, minHeight: 700)
+        .frame(minWidth: 700, minHeight: 500)
     }
     
     var filteredHistory: [ClipboardItem] {
@@ -141,6 +139,13 @@ struct DetailView: View {
                 }
                 
                 Spacer()
+                
+                Button(action: {
+                    engine.copyToClipboard(item)
+                }) {
+                    Label("Copy All", systemImage: "doc.on.doc")
+                }
+                .controlSize(.large)
             }
             .padding()
             .background(Color(NSColor.controlBackgroundColor))
@@ -160,16 +165,6 @@ struct DetailView: View {
                 }
             }
             .background(Color(NSColor.textBackgroundColor))
-        }
-        .toolbar {
-            ToolbarItem(placement: .primaryAction) {
-                Button(action: {
-                    engine.copyToClipboard(item)
-                }) {
-                    Label("Copy All", systemImage: "doc.on.doc")
-                }
-                .help("Copy content to clipboard")
-            }
         }
     }
 }
